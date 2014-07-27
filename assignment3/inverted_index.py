@@ -2,7 +2,7 @@ import MapReduce
 import sys
 
 """
-Problem two
+Problem 1
 """
 
 mr = MapReduce.MapReduce()
@@ -13,19 +13,19 @@ mr = MapReduce.MapReduce()
 def mapper(record):
     # key: document identifier
     # value: document contents
-    key = record[1]
-    value = record
-    mr.emit_intermediate(key, value)
+    doc_id = record[0]
+    text = record[1]
+    words = set(text.split())
+    for w in words:
+      mr.emit_intermediate(w, doc_id)
 
 def reducer(key, list_of_values):
     # key: word
     # value: list of occurrence counts
     total = []
-    orders = (value for value in list_of_values if value[0] == 'order')
-    items = (value for value in list_of_values if value[0] == 'line_item')
-    for order in orders:
-        for item in items:
-            mr.emit(order + item)
+    for v in list_of_values:
+      total.append(v)
+    mr.emit((key, total))
 
 # Do not modify below this line
 # =============================
